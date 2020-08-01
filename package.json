@@ -1,0 +1,23 @@
+{
+  "name": "coleccion-libros",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nahuelovejero10/Coleccion-libros"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nahuelovejero10/Coleccion-libros/issues"
+  },
+  "homepage": "https://github.com/nahuelovejero10/Coleccion-libros#readme",
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  }
+}
