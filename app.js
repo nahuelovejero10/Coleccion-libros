@@ -1,35 +1,37 @@
-//DEFINICION DE LAS CLASES
+//Definición de las clases
 class Libro{
     constructor(titulo, autor, isbn){
-        this.titulo = titulo
-        this.autor = autor
-        this.isbn = isbn
+        this.titulo = titulo;
+        this.autor = autor;
+        this.isbn = isbn;
     }
 }
 
 class UI{
-
     static mostrarLibros(){
         const libros = Datos.traerLibros();
-        libros.forEach((libro) => UI.agregarLibro(libro));
-            
+        libros.forEach((libro) => UI.agregarLibroLista(libro));
     }
 
-    static agregarLibro(libro){
+    static agregarLibroLista(libro){
         const lista = document.querySelector('#libro-list');
-        const fila = document.createElement('tr');
-        fila.innerHTML = 
-        `<td> ${libro.titulo}</td> 
-        <td> ${libro.autor}</td>
-        <td> ${libro.isbn}</td>
-        <td><a href="#" class="btn btn-danger btn-small delete">X</a></td>`;
-        lista.appendChild(fila);
-    }
-    static eliminarLibro(element){
-        if(element.classList.contains('delete')){
-            element.parentElement.parentElement.remove();
-        }
 
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${libro.titulo}</td>
+            <td>${libro.autor}</td>
+            <td>${libro.isbn}</td>
+            <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>
+        `;
+        
+        lista.appendChild(fila);
+
+    }
+
+    static eliminarLibro(el){
+        if(el.classList.contains('delete')){
+            el.parentElement.parentElement.remove();
+        }
     }
 
     static mostrarAlerta(mensaje, className){
@@ -41,73 +43,71 @@ class UI{
         const form = document.querySelector('#libro-form');
         container.insertBefore(div, form);
 
-        setTimeout(() => document.querySelector('.alert').remove(), 3000);
+        setTimeout(()=>document.querySelector('.alert').remove(), 3000);
     }
+
     static limpiarCampos(){
         document.querySelector('#titulo').value = '';
         document.querySelector('#autor').value = '';
         document.querySelector('#isbn').value = '';
     }
-
 }
 
 class Datos{
-
     static traerLibros(){
         let libros;
         if(localStorage.getItem('libros') === null){
-            libros = [];            
+            libros = [];
         }else{
             libros = JSON.parse(localStorage.getItem('libros'));
         }
         return libros;
     }
 
-    static agregarUnLibro(libro){
+    static agregarLibro(libro){
         const libros = Datos.traerLibros();
         libros.push(libro);
-        localStorage.setItem('libros',JSON.stringify(libros));
-        
+        localStorage.setItem('libros', JSON.stringify(libros));
     }
+
     static removerLibro(isbn){
         const libros = Datos.traerLibros();
         console.log(isbn);
-        libros.forEach((libro, index) =>{
+
+        libros.forEach((libro, index) => {
             if(libro.isbn === isbn){
-                libros.splice(index,1);
+                libros.splice(index, 1);
             }
         });
         localStorage.setItem('libros', JSON.stringify(libros));
     }
-
 }
 
-//Carga de la pagina
-document.addEventListener('DOMContentLoaded', UI.mostrarLibros());
+//Carga de la página
+document.addEventListener('DOMContentLoaded',UI.mostrarLibros());
 
-//Controlar el evento submit
+//Controlar el Evento Submit.
 document.querySelector('#libro-form').addEventListener('submit',(e) => {
-e.preventDefault();
+    e.preventDefault();
 
-//Obtener valores de los campos
-const titulo = document.querySelector('#titulo').value;
-const autor = document.querySelector('#autor').value;
-const isbn = document.querySelector('#isbn').value;
+    //Obtener valores de los campos
+    const titulo = document.querySelector('#titulo').value;
+    const autor = document.querySelector('#autor').value;
+    const isbn = document.querySelector('#isbn').value;
 
-if(titulo === '' || autor === '' || isbn === ''){
-    UI.mostrarAlerta('Por favor ingrese todos los datos','danger');
-}else{
-    const libro = new Libro(titulo, autor, isbn);
-    Datos.agregarUnLibro(libro);
-    UI.agregarLibro(libro);
-    UI.mostrarAlerta('Libro agregado correctamente', 'success');
-    UI.limpiarCampos();
-}
+    if(titulo === '' || autor === '' || isbn === ''){
+        UI.mostrarAlerta('Por favor ingrese todos los datos', 'danger');
+    }else{
+        const libro = new Libro(titulo, autor, isbn);
+        Datos.agregarLibro(libro);
+        UI.agregarLibroLista(libro);
+        UI.mostrarAlerta('Libro agregado a la colección','success');
+        UI.limpiarCampos();
+    }
 });
 
-//Eliminar libro
 document.querySelector('#libro-list').addEventListener('click', (e) => {
-
     UI.eliminarLibro(e.target);
     Datos.removerLibro(e.target.parentElement.previousElementSibling.textContent);
+    UI.mostrarAlerta('Libro Eliminado','success');
 });
